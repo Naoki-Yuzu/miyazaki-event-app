@@ -4,7 +4,7 @@ import Logo from './logo';
 
 const Footer = () => {
   return (
-    <div className="min-h-[200px] border-t flex flex-col items-center py-6 justify-between">
+    <footer className="min-h-[200px] border-t flex flex-col items-center py-6 justify-between">
       <div className="flex gap-2">
         <Logo />
       </div>
@@ -14,7 +14,7 @@ const Footer = () => {
         <Link href="/" className="tracking-wider text-sm sm:text-base">プライバシーポリシー</Link>
       </div>
       <p className="tracking-wider text-slate-400 text-xs sm:text-sm">© 2023 みやイベ</p>
-    </div>
+    </footer>
   );
 };
 

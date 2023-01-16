@@ -6,7 +6,7 @@ import Logo from './logo';
 
 const Header = () => {
   return (
-    <div className="h-14 sm:h-16 border-b px-2 sm:px-36">
+    <header className="h-14 sm:h-16 border-b px-2 sm:px-36">
       <div className="flex items-center h-full gap-2">
         <Logo />
         <span className="flex-1"/>
@@ -19,7 +19,7 @@ const Header = () => {
         </button>
         <Button className="hidden text-white bg-orange-300">投稿</Button>
       </div>
-    </div>
+    </header>
   );
 };
 

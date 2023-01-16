@@ -10,7 +10,7 @@ const Login: NextPageWithLayout = () => {
       <Head>
         <title>みやイベ | ログイン</title>
       </Head>
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center min-h-screen ">
         <AuthForm isRegister={false}/>
       </div> 
     </>
