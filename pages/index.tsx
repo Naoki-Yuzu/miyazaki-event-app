@@ -16,7 +16,7 @@ const Home: NextPageWithLayout = () => {
       <div className="flex min-h-screen items-center py-12 sm:py-0 px-4 sm:px-64 justify-center sm:justify-between flex-wrap gap-12 sm:gap-0">
         {new Array(4).fill(null).map((_, index) => {
           return (
-            <Post thumbnail="dummyString" title="dummyString" userImage="dummyString" />
+            <Post thumbnail="dummyString" title="dummyString" userImage="dummyString" key={index}/>
           );
         })}
       </div>
