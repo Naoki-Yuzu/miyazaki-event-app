@@ -24,7 +24,7 @@ const AuthForm = ({isRegister} : {isRegister: boolean}) => {
           <input id="password" type="password" placeholder="・・・・・・・・・" className="border-b border-black tracking-wider px-1 outline-none text-sm sm:text-base"></input>
       </div>
       <div className="relative w-full">
-        <Button className="bg-orange-300 text-white w-full px-3 tracking-widest">{isRegister ? "登録" : "ログイン"}</Button>
+        <Button className="bg-orange-300 text-white w-full rounded-full px-3 tracking-widest">{isRegister ? "登録" : "ログイン"}</Button>
         <LockClosedIcon className="w-5 h-5 absolute left-5 top-1/4 text-white"/>
       </div>
       <div className="flex border-2 rounded-xl items-center justify-center gap-2 px-5">
