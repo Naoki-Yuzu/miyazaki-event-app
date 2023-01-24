@@ -16,7 +16,7 @@ const Profile: NextPageWithLayout = () => {
         </div>
         <div className="flex flex-col items-center gap-1 relative">
           <h3 className="text-lg sm:text-2xl font-semibold">串間 ミヤコ</h3>
-          <Link href="/update-profile" className="p-1 sm:p-0 absolute top-[1px] right-[-28px] sm:top-[6px]">
+          <Link href="/edit-profile" className="p-1 sm:p-0 absolute top-[1px] right-[-28px] sm:top-[6px]">
             <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5 text-orange-300 "/>
           </Link>
           <div className="flex items-center gap-1">
