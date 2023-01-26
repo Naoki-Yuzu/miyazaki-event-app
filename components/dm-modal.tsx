@@ -6,16 +6,6 @@ import DmContainer from './dm-container';
 import Message from './message';
 
 const DmModal = ({isOpen, closeModal}: {isOpen: boolean, closeModal: VoidFunction}) => {
-  // let [isOpen, setIsOpen] = useState(true)
-
-  // function closeModal() {
-  //   setIsOpen(false)
-  // }
-
-  // function openModal() {
-  //   setIsOpen(true)
-  // }
-
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>

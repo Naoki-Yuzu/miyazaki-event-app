@@ -3,6 +3,7 @@ import { NextPageWithLayout } from './_app';
 import { ReactElement } from 'react';
 import Layout from '../components/layout';
 import Post from '../components/post';
+import Loading from '../components/loading';
 
 const Home: NextPageWithLayout = () => {
   return (
