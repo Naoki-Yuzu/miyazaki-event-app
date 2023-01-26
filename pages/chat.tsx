@@ -6,7 +6,6 @@ import { NextPageWithLayout } from './_app';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import DmContainer from '../components/dm-container';
 import useWindowSize from '../utils/use-window-size';
-import Loading from '../components/loading';
 
 const Chat: NextPageWithLayout = () => {
   const [width, _] = useWindowSize();

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 
-const Loading = ({isOpen, closeModal}: {isOpen: boolean, closeModal: VoidFunction}) => {
+const LoadingModal = ({isOpen, closeModal}: {isOpen: boolean, closeModal: VoidFunction}) => {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -41,4 +41,4 @@ const Loading = ({isOpen, closeModal}: {isOpen: boolean, closeModal: VoidFunctio
   );
 };
 
-export default Loading;
+export default LoadingModal;

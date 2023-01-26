@@ -3,9 +3,12 @@ import { NextPageWithLayout } from './_app';
 import { ReactElement } from 'react';
 import Layout from '../components/layout';
 import Post from '../components/post';
-import Loading from '../components/loading';
+import ErrorModal from '../components/error-modal';
 
 const Home: NextPageWithLayout = () => {
+  const closeModal = () => {
+  };
+
   return (
     <>
       <Head>
@@ -21,6 +24,7 @@ const Home: NextPageWithLayout = () => {
           );
         })}
       </div>
+      <ErrorModal isOpen closeModal={closeModal}/>
     </>
   );
 };
