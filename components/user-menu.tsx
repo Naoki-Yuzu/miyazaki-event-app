@@ -2,6 +2,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useRef, useState, forwardRef, ReactNode } from 'react'
 import { UserIcon, ArrowLeftOnRectangleIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link';
+import { logout } from '../utils/google-auth'
 
 const LinkForHeadlessUi = forwardRef<HTMLAnchorElement, {
   href: string;
@@ -66,7 +67,7 @@ const UserMenu = () => {
                 {({ active }) => (
                   <>
                     <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
-                    <button className="text-xs sm:text-sm w-full font-semibold text-left">
+                    <button className="text-xs sm:text-sm w-full font-semibold text-left" onClick={logout}>
                       ログアウト
                     </button>
                   </>

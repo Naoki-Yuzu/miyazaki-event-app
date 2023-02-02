@@ -4,8 +4,14 @@ import { ReactElement } from 'react';
 import Layout from '../components/layout';
 import Post from '../components/post';
 import EmailVerificationModal from '../components/email-verification-modal';
+import { useUser } from '../context/user-context';
 
 const Home: NextPageWithLayout = () => {
+  const { currentUser, isLoading } = useUser();
+
+  // console.log("現在のユーザー from トップページ:", currentUser);
+
+
   return (
     <>
       <Head>
