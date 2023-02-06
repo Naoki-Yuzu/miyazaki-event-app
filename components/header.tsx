@@ -16,7 +16,10 @@ const Header = () => {
         <span className="flex-1"/>
         
         {currentUser ?
-          <UserMenu /> : 
+          <>
+            <Link href="/create-post" className="text-xs sm:text-base rounded-xl font-semibold border-orange-300 border-2 py-1 px-3 hover:opacity-75 duration-200 tracking-widest text-white bg-orange-300 mr-3">投稿</Link>
+            <UserMenu /> 
+          </> :
           <>
             <Link href="/login" className="text-xs sm:text-base rounded-xl font-semibold border-orange-300 border-2 py-1 px-3 hover:opacity-75 duration-200 tracking-widest text-orange-300 mr-1">ログイン</Link>
             <Link href="/sign-up" className="text-xs sm:text-base rounded-xl font-semibold border-orange-300 border-2 py-1 px-3 hover:opacity-75 duration-200 tracking-widest text-white bg-orange-300">会員登録</Link>
@@ -27,7 +30,7 @@ const Header = () => {
         {/* <button className="mr-5">
           <img className=" rounded-full object-cover w-10 h-10 object-right-top" src="/profile-image.jpg" alt="profileImage"/>
         </button> */}
-        <Button className="hidden text-white bg-orange-300">投稿</Button>
+        
       </div>
     </header>
   );

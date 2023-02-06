@@ -23,7 +23,7 @@ const UserMenu = () => {
   return (
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="block mr-5">
+          <Menu.Button className="block">
             <img className=" rounded-full object-cover w-10 h-10 object-right-top" src="/profile-image.jpg" alt="profileImage"/>
           </Menu.Button>
         </div>

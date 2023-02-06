@@ -128,7 +128,7 @@ const AuthForm = ({isRegister} : {isRegister: boolean}) => {
       <p className="text-[10px] sm:text-xs tracking-wider text-right ml-auto">既にアカウントをお持ちの方は{<Link href="/login" className="text-[10px] sm:text-xs text-orange-400 tracking-wider">こちら</Link>}</p> :
       <p className="text-[10px] sm:text-xs tracking-wider text-right ml-auto">まだアカウントをお持ちでない方は{<Link href="/sign-up" className="text-[10px] sm:text-xs text-orange-400 tracking-wider">こちら</Link>}</p> 
       }
-    <LoadingModal isOpen={isOpen} closeModal={closeModal}/>
+      <LoadingModal isOpen={isOpen} closeModal={closeModal}/>
     </form>
   )
 };

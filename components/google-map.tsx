@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import GoogleMapReact from 'google-map-react';
+import { Location } from '../types/location';
 
-const GoogleMap = ({className}: {className: string | undefined}) => {
+const GoogleMap = ({className, setLocation, setLocationError}: {className: string | undefined, setLocation: Dispatch<SetStateAction<Location | undefined>>, setLocationError: Dispatch<SetStateAction<boolean>>;}) => {
   const [map, setMap] = useState<any>(null);
   const [maps, setMaps] = useState<any>(null);
   const [marker, setMarker] = useState<any>(null);
@@ -20,11 +21,15 @@ const GoogleMap = ({className}: {className: string | undefined}) => {
       lat,
       lng
     }
+    setLocation({
+      lat,
+      lng,
+    });
+    setLocationError(false);
     setMarker(new maps.Marker({
       map,
       position: location,
     }));
-    console.log(location);
   }
 
   // const handleApiLoaded = ({map, maps} : {map: any, maps: any}) => {
