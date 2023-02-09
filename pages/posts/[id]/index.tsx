@@ -33,6 +33,7 @@ const PostDetail: NextPageWithLayout = () => {
       console.log("リザルト", result.data());
       const postData = result.data();
       setPost(postData as Post);
+      console.log(`型確認記事詳細 : ${typeof(postData?.location)}`)
       setEventLocation(postData?.location[0] as Location)
 
       const userRef = doc(db, `users/${post?.authorId}`)
@@ -91,7 +92,7 @@ const PostDetail: NextPageWithLayout = () => {
               <p className="text-base sm:text-lg font-bold  sm:mr-14">応募締め切り日：{post.deadlineDate}</p>
               <p className="text-xs sm:text-sm ml-1 sm:ml-0 sm:mr-14">参加可能人数：{post.maxParticipation}人</p>
               {currentUser && post.authorId == currentUser.uid &&
-              <Link href={`/posts/${post.id}/edit`}>
+              <Link href={`/posts/${post.id}/edit-post`}>
                 <PencilSquareIcon className="h-5 w-5 text-orange-300"/> 
               </Link>}
             </div>

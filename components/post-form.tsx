@@ -37,18 +37,22 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
   const { currentUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+  const [oldPost, setOldPost] = useState<Post>()
 
   useEffect(() => {
     if(router.query.id) {
       const ref = doc(db, `posts/${router.query.id}`);
       getDoc(ref).then((result) => {
         const oldPost = result.data() as Post;
+        // console.log("古い投稿 :", oldPost);
         reset(oldPost);
+        setPreview(oldPost.thumbnailURL as string)
+        setOldPost(oldPost)
       }).catch((err) => {
         console.log("更新記事取得エラー :", err);
       })
     }
-  });
+  }, []);
 
   if (image) {
     setPreview(image);
@@ -106,19 +110,22 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
     const dbRef = isCreate ? doc(collection(db, "posts")) : doc(db, `posts/${router.query.id}`);
 
     try {
-      if (file == undefined) {
-        return;
+      let thumbnailURL;
+      if (isCreate) {
+        if (file == undefined) {
+          return;
+        }
+        console.log("画像アップロード処理開始");
+        const storageRef = ref(storage, `posts/${dbRef.id}/thumbnailURL`);
+        await uploadBytes(storageRef, file)
+        thumbnailURL = await getDownloadURL(storageRef);
       }
-      console.log("画像アップロード処理開始");
-      const storageRef = ref(storage, `posts/${dbRef.id}/thumbnailURL`);
-      await uploadBytes(storageRef, file)
-      const thumbnailURL = await getDownloadURL(storageRef);
 
       const post: Post = {
         id: isCreate ? dbRef.id : router.query.id as string,
         authorId: currentUser.uid,
         title: data.title,
-        thumbnailURL: thumbnailURL,
+        thumbnailURL: isCreate ? thumbnailURL : oldPost?.thumbnailURL,
         text: data.text,
         maxParticipation: data.maxParticipation,
         participationNumber: null,
@@ -128,12 +135,12 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
           lat: location.lat,
           lng: location.lng,
         }),
-        createdAt: Date.now(),
-        updatedAt: null,
+        createdAt: isCreate ? Date.now() :  oldPost!.createdAt,
+        updatedAt: isCreate ? null : Date.now(),
       };
       console.log("投稿内容 :", post);
-      setDoc(dbRef, post, {merge: true}).then(() => {
-        console.log("記事を投稿しました。");
+      setDoc(dbRef, post).then(() => {
+        console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
         setIsModalOpen(false);
         router.push("/");
       }).catch((err) => {
@@ -178,7 +185,9 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
                 className="w-full rounded tracking-wider px-1 outline-none text-sm sm:text-base sm:h-9" 
                 onChange={handleChangeFile}
               />
-              <Button type="button" className="w-[160px] text-white bg-orange-300 px-7 rounded-xl" onClick={SelectImage}>{isCreate ? "画像を選択" : "画像を再選択"}</Button>
+              {isCreate && 
+                <Button type="button" className="w-[160px] text-white bg-orange-300 px-7 rounded-xl" onClick={SelectImage}>{isCreate ? "画像を選択" : "画像を再選択"}</Button>
+              }
             </div>
             {fileError && <p className="text-red-600 text-[10px] sm:text-xs">画像を選択してください</p>}
         </div>

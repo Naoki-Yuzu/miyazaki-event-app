@@ -8,6 +8,8 @@ const GoogleMap = ({className, setLocation, setLocationError, eventLocation}: {c
   const [marker, setMarker] = useState<any>(null);
   let defaultLocation : Coords;
 
+  // console.log("イベントロケ from google", eventLocation);
+
   if (eventLocation) {
     defaultLocation = {
       // イベント会場

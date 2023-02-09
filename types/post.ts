@@ -2,7 +2,7 @@ export type Post = {
   id: string;
   authorId: string;
   title: string;
-  thumbnailURL: string | null;
+  thumbnailURL: string | null | undefined;
   text: string;
   maxParticipation: string;
   participationNumber: string | null;

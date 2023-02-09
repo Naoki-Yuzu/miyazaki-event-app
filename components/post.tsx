@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase/client-app';
 
-const Post = ({postId, thumbnail, title, authorId} : {postId: string, thumbnail: string | null, title: string, authorId: string}) => {
+const Post = ({postId, thumbnail, title, authorId} : {postId: string, thumbnail: string | null | undefined, title: string, authorId: string}) => {
   // console.log("著者ID :",authorId)
   const [name, setName] = useState();
   const [profileImageURL, setProfileImageURL] = useState();
