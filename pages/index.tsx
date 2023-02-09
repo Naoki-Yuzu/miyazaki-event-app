@@ -20,7 +20,7 @@ export const getStaticProps: GetStaticProps<{posts: Post[] | undefined}> = async
     console.log("記事群取得エラー :", err);
   }
 
-  console.log("投稿群", posts);
+  // console.log("投稿群", posts);
 
   return {
     props: {

@@ -1,5 +1,5 @@
 import { async } from '@firebase/util';
-import { arrayUnion, collection, doc, setDoc } from 'firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes, uploadString } from "firebase/storage";
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -27,7 +27,7 @@ const participationNumber = [
 ];
 
 const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefined}) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<Post>();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<Post>();
   const [fileError, setFileError ] = useState<boolean>(false);
   const [locationError, setLocationError] = useState<boolean>(false);
   const [file, setFile] = useState<File>();
@@ -37,6 +37,18 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
   const { currentUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if(router.query.id) {
+      const ref = doc(db, `posts/${router.query.id}`);
+      getDoc(ref).then((result) => {
+        const oldPost = result.data() as Post;
+        reset(oldPost);
+      }).catch((err) => {
+        console.log("更新記事取得エラー :", err);
+      })
+    }
+  });
 
   if (image) {
     setPreview(image);
@@ -91,7 +103,7 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
     }
 
     setIsModalOpen(true);
-    const dbRef = doc(collection(db, "posts"));
+    const dbRef = isCreate ? doc(collection(db, "posts")) : doc(db, `posts/${router.query.id}`);
 
     try {
       if (file == undefined) {
@@ -103,7 +115,7 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
       const thumbnailURL = await getDownloadURL(storageRef);
 
       const post: Post = {
-        id: dbRef.id,
+        id: isCreate ? dbRef.id : router.query.id as string,
         authorId: currentUser.uid,
         title: data.title,
         thumbnailURL: thumbnailURL,
@@ -120,7 +132,7 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         updatedAt: null,
       };
       console.log("投稿内容 :", post);
-      setDoc(dbRef, post).then(() => {
+      setDoc(dbRef, post, {merge: true}).then(() => {
         console.log("記事を投稿しました。");
         setIsModalOpen(false);
         router.push("/");
@@ -208,7 +220,7 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         <div className="flex flex-col gap-4 w-[80%] ">
             <label htmlFor="location" className="block tracking-wider text-sm sm:text-base w-full">開催場所 *</label>
             <div className="flex gap-3 flex-wrap">
-              <GoogleMap setLocation={setLocation} setLocationError={setLocationError} className="w-full h-[200px] sm:w-[500px] sm:h-[300px]"/> 
+              <GoogleMap setLocation={setLocation} setLocationError={setLocationError} eventLocation={undefined} className="w-full h-[200px] sm:w-[500px] sm:h-[300px]"/> 
               <p className="sm:flex-1 text-xs sm:text-sm pt-2 pr-3 ">
                 クリックまたはタップをして、開催場所にピンを立ててください
               </p>

@@ -1,6 +1,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase/client-app';
 
@@ -16,7 +17,7 @@ const Post = ({postId, thumbnail, title, authorId} : {postId: string, thumbnail:
   useEffect(() => {
     const ref = doc(db, `users/${authorId}`);
     getDoc(ref).then((result) => {
-      console.log(result.data());
+      // console.log(result.data());
       const authorInfo = result.data();
       setName(authorInfo?.name);
       setProfileImageURL(authorInfo?.profileImage);
@@ -26,7 +27,7 @@ const Post = ({postId, thumbnail, title, authorId} : {postId: string, thumbnail:
   return (
     <div className="flex flex-col w-[300px] sm:w-[400px] items-center bg-white rounded-xl overflow-hidden shadow-lg">
       {/* <Link href="/post-detail"> */}
-      <Link href={`/post-detail/${postId}`}>
+      <Link href={`/posts/${postId}`}>
         {/* <Image src="/post-thumbnail.jpg" alt="thumbnail" height={180} width={400} className="h-[140px] sm:h-[180px] object-cover"/> */}
         <img src={thumbnail} alt="thumbnail" height={180} width={400} className="h-[140px] sm:h-[180px] object-cover"/>
         {/* <h1 className=" font-bold text-base sm:text-xl pt-1 px-1 tracking-wider">【暮らし】宮崎出身のカメラマンが自然豊かな西都原での生活を紹介</h1> */}

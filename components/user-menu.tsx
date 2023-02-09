@@ -3,6 +3,7 @@ import { Fragment, useEffect, useRef, useState, forwardRef, ReactNode } from 're
 import { UserIcon, ArrowLeftOnRectangleIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link';
 import { logout } from '../utils/google-auth'
+import { useRouter } from 'next/router';
 
 const LinkForHeadlessUi = forwardRef<HTMLAnchorElement, {
   href: string;
@@ -20,8 +21,17 @@ const LinkForHeadlessUi = forwardRef<HTMLAnchorElement, {
 LinkForHeadlessUi.displayName = "toProfileLink";
 
 const UserMenu = () => {
+  const router = useRouter();
+  const logoutWithFirebase = () => [
+    logout().then(() =>{
+      router.push("/")
+    }).catch((err) => {
+      alert("ログアウトエラーです")
+    })
+  ]
+
   return (
-      <Menu as="div" className="relative inline-block text-left">
+      <Menu as="div" className="relative inline-block text-left ">
         <div>
           <Menu.Button className="block">
             <img className=" rounded-full object-cover w-10 h-10 object-right-top" src="/profile-image.jpg" alt="profileImage"/>
@@ -37,7 +47,7 @@ const UserMenu = () => {
           leaveTo="transform opacity-0 scale-95"
         >
           {/* <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"> */}
-          <Menu.Items className="shadow-md absolute right-0 mt-1 sm:mt-2 w-56 origin-top-right bg-white border rounded-md flex flex-col">
+          <Menu.Items className="shadow-md absolute right-0 mt-1 sm:mt-2 w-56 origin-top-right bg-white border rounded-md flex flex-col z-30">
             <div className="px-2 py-1 sm:px-3 sm:py-2 border-b h-10 flex items-center gap-1 sm:gap-3">
               <Menu.Item >
                 {({ active }) => (
@@ -67,7 +77,7 @@ const UserMenu = () => {
                 {({ active }) => (
                   <>
                     <ArrowLeftOnRectangleIcon className="h-5 w-5"/>
-                    <button className="text-xs sm:text-sm w-full font-semibold text-left" onClick={logout}>
+                    <button className="text-xs sm:text-sm w-full font-semibold text-left" onClick={logoutWithFirebase}>
                       ログアウト
                     </button>
                   </>
