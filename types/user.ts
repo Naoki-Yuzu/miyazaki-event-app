@@ -1,8 +1,7 @@
 export type User = {
-  id: string;
+  uid: string;
   name: string;
-  email: string;
-  password: string;
-  profile: string | undefined;
-  profileImage: string | undefined;
+  profileText: string | undefined;
+  profileImage: string | undefined | null;
+  livingStatusType: string | undefined;
 };

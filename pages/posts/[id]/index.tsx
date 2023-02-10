@@ -76,7 +76,7 @@ const PostDetail: NextPageWithLayout = () => {
         </div>
         {/* <h1 className="mx-2 text-xl sm:text-3xl font-semibold">【イベント】高千穂に移住したい人たち集まれ！地元民による交流会を開催</h1> */}
         <h1 className="mx-2 text-xl sm:text-3xl font-semibold">{post?.title}</h1>
-        <Link href="/" className="w-full">
+        <Link href={`/profiles/${post.authorId}`} className="w-full">
           <div className="flex items-center gap-2 m-3">
             {/* <Image src="/user-image-miyazaki-hinata.jpg" alt="userImage"  className="sm:w-[36px] sm:h-[36px] w-6 h-6 object-cover rounded-full"  height={36} width={36}/> */}
             <img src={author?.profileImage} alt="userImage"  className="sm:w-[36px] sm:h-[36px] w-6 h-6 object-cover rounded-full"  height={36} width={36}/>

@@ -33,14 +33,12 @@ const Post = ({postId, thumbnail, title, authorId} : {postId: string, thumbnail:
         {/* <h1 className=" font-bold text-base sm:text-xl pt-1 px-1 tracking-wider">【暮らし】宮崎出身のカメラマンが自然豊かな西都原での生活を紹介</h1> */}
         <h1 className=" font-bold text-base sm:text-xl pt-1 px-1 tracking-wider">{title}</h1>
       </Link>
-      <Link href="/" className="w-full">
-        <div className="flex items-center gap-2 mx-1">
-          {/* <Image src="/user-image-miyazaki-hinata.jpg" alt="userImage"  className="w-[30px] h-[30px] object-cover rounded-full my-1"  height={30} width={30}/> */}
-          <img src={profileImageURL} alt="userImage"  className="w-[30px] h-[30px] object-cover rounded-full my-1"  height={30} width={30}/>
-          {/* <p className="text-zinc-700 text-sm sm:text-base tracking-wide">宮崎 ヒナタ</p> */}
-          <p className="text-zinc-700 text-sm sm:text-base tracking-wide">{name}</p>
-        </div>
-      </Link>
+      <div className="flex items-center gap-2 mx-1 w-full">
+        {/* <Image src="/user-image-miyazaki-hinata.jpg" alt="userImage"  className="w-[30px] h-[30px] object-cover rounded-full my-1"  height={30} width={30}/> */}
+        <img src={profileImageURL ? profileImageURL : "/profile-image.svg"} alt="userImage"  className="w-[30px] h-[30px] object-cover rounded-full my-1"  height={30} width={30}/>
+        {/* <p className="text-zinc-700 text-sm sm:text-base tracking-wide">宮崎 ヒナタ</p> */}
+        <p className="text-zinc-700 text-sm sm:text-base tracking-wide">{name}</p>
+      </div>
       <p className="text-left w-full text-xs sm:text-sm text-slate-400 px-3 my-1 tracking-wide">6日前</p>
     </div>
   );

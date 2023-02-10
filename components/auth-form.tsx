@@ -13,15 +13,16 @@ import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailA
 import { auth, db } from '../firebase/client-app';
 import { doc, setDoc } from 'firebase/firestore';
 import LoadingModal from './loading-modal';
+import { Auth } from '../types/auth';
 
 const AuthForm = ({isRegister} : {isRegister: boolean}) => {
-  const {register, handleSubmit, formState: { errors }} = useForm<User>();
+  const {register, handleSubmit, formState: { errors }} = useForm<Auth>();
   const { currentUser } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   console.log("現在のユーザー from 認証ページ:", currentUser);
 
-  const createUserWithEAndP = (data: User) => {
+  const createUserWithEAndP = (data: Auth) => {
     console.log("フォームデータ :", data);
     setIsOpen(true);
     createUserWithEmailAndPassword(auth, data.email, data.password).then((result) => {
@@ -46,7 +47,7 @@ const AuthForm = ({isRegister} : {isRegister: boolean}) => {
     });
   };
 
-  const loginUserWithEAndP = (data: User) => {
+  const loginUserWithEAndP = (data: Auth) => {
     setIsOpen(true);
     signInWithEmailAndPassword(auth, data.email, data.password).then(() => {
       router.push("/");

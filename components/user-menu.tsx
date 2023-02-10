@@ -4,6 +4,9 @@ import { UserIcon, ArrowLeftOnRectangleIcon, ChatBubbleLeftEllipsisIcon } from '
 import Link from 'next/link';
 import { logout } from '../utils/google-auth'
 import { useRouter } from 'next/router';
+import { useUser } from '../context/user-context';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/client-app';
 
 const LinkForHeadlessUi = forwardRef<HTMLAnchorElement, {
   href: string;
@@ -21,7 +24,17 @@ const LinkForHeadlessUi = forwardRef<HTMLAnchorElement, {
 LinkForHeadlessUi.displayName = "toProfileLink";
 
 const UserMenu = () => {
+  const { currentUser } = useUser()
+  const [profileURL, setProfileURL] = useState();
   const router = useRouter();
+
+  useEffect(() => {
+    const ref = doc(db, `users/${currentUser.uid}`)
+    getDoc(ref).then((result) => {
+      setProfileURL(result.data()?.profileImage)
+    });
+  })
+
   const logoutWithFirebase = () => [
     logout().then(() =>{
       router.push("/")
@@ -30,11 +43,13 @@ const UserMenu = () => {
     })
   ]
 
+  console.log(currentUser);
+
   return (
       <Menu as="div" className="relative inline-block text-left ">
         <div>
           <Menu.Button className="block">
-            <img className=" rounded-full object-cover w-10 h-10 object-right-top" src="/profile-image.jpg" alt="profileImage"/>
+            <img className=" rounded-full object-cover w-10 h-10 object-right-top" src={profileURL ? profileURL : "profile-image.svg"} alt="profileImage"/>
           </Menu.Button>
         </div>
         <Transition
@@ -53,7 +68,7 @@ const UserMenu = () => {
                 {({ active }) => (
                   <>
                     <UserIcon className="h-5 w-5"/>
-                    <LinkForHeadlessUi href="/profile" className="block text-xs sm:text-sm w-full font-semibold">
+                    <LinkForHeadlessUi href={`/profiles/${currentUser.uid}`} className="block text-xs sm:text-sm w-full font-semibold">
                       プロフィール
                     </LinkForHeadlessUi>
                   </>
