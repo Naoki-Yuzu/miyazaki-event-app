@@ -14,6 +14,26 @@ import { format } from 'date-fns';
 import { useUser } from '../../../context/user-context';
 import GoogleMap from '../../../components/google-map';
 import { Location } from '../../../types/location';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { adminDB } from '../../../firebase/server-app';
+
+// export const getStaticProps: GetStaticProps<{post: Post;}> = async (context) => {
+//   const result = await adminDB.doc(`posts/${context.params?.id}`).get()
+//   const post = result.data() as Post;
+
+//   return {
+//     props: {
+//       adminPost: p
+//     }
+//   }
+// }
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   return {
+//     paths: [],
+//     fallback: "blocking",
+//   }
+// }
 
 const PostDetail: NextPageWithLayout = () => {
   const router = useRouter();
@@ -97,39 +117,6 @@ const PostDetail: NextPageWithLayout = () => {
               </Link>}
             </div>
             <hr className="border-slate-500"/>
-            {/* <p className="leading-loose tracking-wide text-sm sm:text-base">
-              生まれも育ちも高千穂の【タカタカ チホチホさんとミヤミヤ ザキザキさん】が、なんと今回、イベントを主催して下さることになりました！<br />
-              <br />
-              「宮崎県外から宮崎市内に移住してきたけど、実は高千穂にも興味がある...」<br />
-              「今は都心に住んでいるけど、実は高千穂に移住しようか悩んでいる...」<br />
-              <br />
-              そんな方々の参考になったら良いなと思い、今回のイベントを企画しました。<br />
-              <br />
-              イベント内容は主に、仕事・居住環境・地域の人たちの繋がり・相談会の4つとなっています。<br />
-              <br />
-              仕事については、高千穂に移住した場合どういった仕事があるのか、今後どういった仕事が増えていきそうかといった、生活していくうえで重要となる「働き方」に関して、焦点を絞ったお話しをして頂こうと思っています。<br />
-              <br />
-              そして居住環境については、高千穂の人たちはどういった環境で生活しているのかに着目していきます。大自然と隣合わせの生活だからこそ不安になる、「土砂災害や洪水といった問題とどう向き合っているのか、またそもそも安全に生活できるのか」そういった純粋な疑問にもお答えできればと考えています。<br />
-              <br />
-              そして地域の人たちの繋がりについては、高千穂の人々はどのようなコミュニティで成り立っているのかといったお話しをして頂きます。<br />
-              移住することにおいて、人との繋がりは重要な問題となってきます。困ったときに支え合える存在がいることは、その地で生活することの安心感にも繋がってくるでしょう。<br />
-              そんな不安を払拭できるような時間にしたいと思っています。<br />
-              <br />
-              最後の相談会については、タカタカ チホチホさんとミヤミヤ ザキザキさんに、直接質問をしたり、悩みを相談することができます。<br />
-              <br />
-              質問に関しては、参加者が共有し合えるように全員で行い、相談に関しては、個別で行う予定です。<br />
-              是非、この機会を活かしてみてください！<br />
-              <br />
-              場所は、宮崎駅より徒歩約10分、橘通りのATOMicaの会議室となります。<br />
-              Google Meetでオンライン上から参加することもできるので、直接足を運ぶことができない方でも気軽に参加できます！<br />
-              <br />
-              お二人のSNSは以下となっていますので、気になる方は覗いてみてください。<br />
-              <br />
-              タカタカ チホチホさん：https://twitter.com/demo_taka_chiho_demo<br />
-              ミヤミヤ ザキザキさん：https://twitter.com/demo_miya_zaki_demo<br />
-              <br />
-              何か気になることがありましたら、「メッセージを送る」よりいつでも相談ください。<br />
-              それでは、皆様と会えることを楽しみにしています！ */}
             <p className="leading-loose tracking-wide text-sm sm:text-base">{post.text}
             </p>
             <hr className="border-slate-500 sm:hidden"/>

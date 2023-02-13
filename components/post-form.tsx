@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useUser } from '../context/user-context';
-import { db, storage } from '../firebase/client-app';
+import { auth, db, storage } from '../firebase/client-app';
 import { Location } from '../types/location';
 import { Post } from '../types/post';
 import Button from './button';
@@ -139,10 +139,29 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         updatedAt: isCreate ? null : Date.now(),
       };
       console.log("投稿内容 :", post);
-      setDoc(dbRef, post).then(() => {
-        console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
-        setIsModalOpen(false);
-        router.push("/");
+      setDoc(dbRef, post).then( async () => {
+        const token = await auth.currentUser?.getIdToken(true);
+
+        fetch("/api/revalidate?path=/", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          }
+        })
+        .then((res) => res.json())
+        .then(() => {
+          console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
+          setIsModalOpen(false);
+          router.push("/");
+        }).catch((err) => {
+          console.log("onDemand ISR エラー :", err);
+        })
+        // console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
+        // setIsModalOpen(false);
+        // router.push("/");
+      
+
+        
       }).catch((err) => {
         setIsModalOpen(false);
         alert("エラーが発生しました");
