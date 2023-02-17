@@ -80,7 +80,7 @@ const UserMenu = () => {
                 {({ active }) => (
                   <>
                     <ChatBubbleLeftEllipsisIcon className="h-5 w-5"/>
-                    <LinkForHeadlessUi href="/chat" className="block text-xs sm:text-sm w-full font-semibold">
+                    <LinkForHeadlessUi href="/chats" className="block text-xs sm:text-sm w-full font-semibold">
                       メッセージ管理
                     </LinkForHeadlessUi>
                   </>

@@ -25,7 +25,7 @@ const Post = ({postId, thumbnail, title, authorId} : {postId: string, thumbnail:
   })
 
   return (
-    <div className="flex flex-col w-[300px] sm:w-[400px] items-center bg-white rounded-xl overflow-hidden shadow-lg">
+    <div className="my-12 flex flex-col w-[300px] sm:w-[400px] items-center bg-white rounded-xl overflow-hidden shadow-lg">
       {/* <Link href="/post-detail"> */}
       <Link href={`/posts/${postId}`}>
         {/* <Image src="/post-thumbnail.jpg" alt="thumbnail" height={180} width={400} className="h-[140px] sm:h-[180px] object-cover"/> */}

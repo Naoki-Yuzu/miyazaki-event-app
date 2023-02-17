@@ -15,6 +15,7 @@ export const getStaticProps: GetStaticProps<{posts: Post[] | undefined}> = async
   try {
     const snap = await adminDB.collection("posts").orderBy("createdAt", "desc").get();
     posts = snap.docs.map(doc => doc.data() as Post);
+    console.log(posts);
   }
   catch (err) {
     console.log("記事群取得エラー :", err);
@@ -45,7 +46,7 @@ const Home: NextPageWithLayout<InferGetStaticPropsType<typeof getStaticProps>> =
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex min-h-screen items-center py-12 sm:py-0 px-4 sm:px-64 justify-center sm:justify-between flex-wrap gap-12 sm:gap-0">
+      <div className="flex max-h-[calc(100vh-256px)] sm:max-h-[calc(100vh-264px)] items-center py-12 sm:py-0 px-4 sm:px-64 justify-center sm:justify-between flex-wrap gap-12 sm:gap-0 overflow-y-scroll ">
         {/* {new Array(4).fill(null).map((_, index) => {
           return (
             <PostComp thumbnail="dummyString" title="dummyString" userImage="dummyString" key={index}/>

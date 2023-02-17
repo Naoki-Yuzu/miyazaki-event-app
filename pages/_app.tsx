@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { NextPage } from 'next'
 import { UserProvider } from '../context/user-context'
+import { ChatProvider } from '../context/chat-context'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -17,7 +18,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <UserProvider>
-      {getLayout(<Component {...pageProps} />)}
+      <ChatProvider>
+        {getLayout(<Component {...pageProps} />)}
+      </ChatProvider>
     </UserProvider>
   )
 

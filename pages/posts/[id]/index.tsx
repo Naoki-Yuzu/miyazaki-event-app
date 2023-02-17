@@ -6,7 +6,7 @@ import { NextPageWithLayout } from '../../_app';
 import Button from '../../../components/button';
 import { ArrowPathIcon, ClockIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
-import { doc, DocumentData, getDoc } from 'firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/client-app';
 import { Post } from '../../../types/post';
 import { User } from '../../../types/user';
@@ -16,6 +16,8 @@ import GoogleMap from '../../../components/google-map';
 import { Location } from '../../../types/location';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { adminDB } from '../../../firebase/server-app';
+import { async } from '@firebase/util';
+import { Portal } from '@headlessui/react';
 
 // export const getStaticProps: GetStaticProps<{post: Post;}> = async (context) => {
 //   const result = await adminDB.doc(`posts/${context.params?.id}`).get()
@@ -48,17 +50,17 @@ const PostDetail: NextPageWithLayout = () => {
   useEffect(() => {
     console.log(postId);
     const postRef = doc(db, `posts/${postId}`);
-    console.log("DBリファレンス", postRef);
+    // console.log("DBリファレンス", postRef);
     getDoc(postRef).then((result) => {
-      console.log("リザルト", result.data());
+      // console.log("リザルト", result.data());
       const postData = result.data();
       setPost(postData as Post);
-      console.log(`型確認記事詳細 : ${typeof(postData?.location)}`)
+      // console.log(`型確認記事詳細 : ${typeof(postData?.location)}`)
       setEventLocation(postData?.location[0] as Location)
 
       const userRef = doc(db, `users/${post?.authorId}`)
       getDoc(userRef).then((useResult) => {
-        console.log("ユーザーリザルト", useResult.data());
+        // console.log("ユーザーリザルト", useResult.data());
         setAuthor(useResult.data() as User);
       }).catch((err) => {
         console.log("エラー :", err);
@@ -70,12 +72,70 @@ const PostDetail: NextPageWithLayout = () => {
 
   }, [post != undefined])
 
-  // if (post != undefined) {
-  //   setEventLocation(post.location as Location);
-  // }
-
-  if(post?.thumbnailURL == null) {
+  if(post == null) {
     return null;
+  }
+
+  const sendMessage = async () => {
+    const combinedId = currentUser.uid > post.authorId ? currentUser.uid + post.authorId : post.authorId + currentUser.uid
+
+    
+    try {
+      const ref = await getDoc(doc(db, "chats", combinedId));
+
+      if(!ref.exists()) {
+        console.log("チャットデータ作成開始");
+        await setDoc(doc(db, "chats", combinedId), { messages: [] }, {merge: true});
+
+        const ownerRef = collection(db, "chatPartnerLists", currentUser.uid, "data");
+
+        // await setDoc(doc(db, "chatPartnerLists", currentUser.uid), {
+          // [combinedId + ".partnerId"]: post.authorId,
+          // [combinedId + ".date"]: Date.now(),
+        //   [combinedId]: {
+        //       partnerId: post.authorId,
+        //       date: Date.now(),
+        //     }
+        // }, {merge: true});
+
+        // const ownerData: Param = {
+        //   combinedId: combinedId,
+        //   partnerId: post.authorId,
+        //   date: Date.now(),
+        // }
+
+        await setDoc(doc(ownerRef, combinedId), ({
+            combinedId: combinedId,
+            partnerId: post.authorId,
+            date: Date.now(),
+        }), {merge: true});
+
+        const partnerRef = collection(db, "chatPartnerLists", post.authorId, "data");
+
+        // await setDoc(doc(db, "chatPartnerLists", post.authorId, ), {
+          // [combinedId + ".partnerId"]: currentUser.uid,
+          // [combinedId + ".date"]: Date.now(),
+        //   [combinedId]:{
+        //     partnerId: post.authorId,
+        //     date: Date.now(),
+        //   }
+        // }, {merge: true});
+        await setDoc(doc(partnerRef, combinedId), ({
+          combinedId: combinedId,
+          partnerId: currentUser.uid,
+          date: Date.now(),
+        }), {merge: true});
+
+        // router.push("/chats");
+      }
+      console.log("完了しました");
+    } 
+    catch (err) {
+      console.log("メッセージ送信準備エラー :", err);
+    }
+    finally {
+      router.push("/chats");
+    }
   }
 
 
@@ -126,9 +186,13 @@ const PostDetail: NextPageWithLayout = () => {
            
           </div>
           <div className="hidden flex-1 sm:flex flex-col gap-10 py-8 px-10">
-            <Button className="rounded-full text-white bg-orange-300 h-12 shadow-md tracking-wide">メッセージを送る</Button>
+            {currentUser.uid != post.authorId &&
+            <Button className="rounded-full text-white bg-orange-300 h-12 shadow-md tracking-wide" onClick={sendMessage}>メッセージを送る</Button>
+             }
             <p className="font-semibold pl-1 tracking-wide">{post.participationNumber}人が参加しています</p>
+            {currentUser.uid != post.authorId &&
             <Button className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm">参加する</Button>
+            }
             <hr className="border-slate-500"/>
             <h3 className="font-semibold tracking-wide pl-1">開催場所</h3>
             <GoogleMap className="bg-orange-300 h-[200px] shadow-md rounded-lg" 
@@ -139,8 +203,12 @@ const PostDetail: NextPageWithLayout = () => {
       <div className="sm:hidden flex-1 flex flex-col fixed bottom-5 w-[95%] bg-white border py-4 rounded-xl shadow-md">
         <div className="w-[90%] flex flex-col mx-auto gap-4">
           <p className="text-sm font-semibold pl-1 tracking-wide w-full">{post.participationNumber}人が参加しています</p>
-          <Button className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm w-full">参加する</Button>
-          <Button className="rounded-full text-white bg-orange-300 h-11 text-sm shadow-md tracking-wide w-full">メッセージを送る</Button>
+          {currentUser.uid != post.authorId &&
+          <>
+            <Button className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm w-full">参加する</Button>
+            <Button className="rounded-full text-white bg-orange-300 h-11 text-sm shadow-md tracking-wide w-full" onClick={sendMessage}>メッセージを送る</Button>
+          </>
+          }
         </div>
       </div>
     </div>
