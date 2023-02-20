@@ -28,8 +28,8 @@ const Profile: NextPageWithLayout = () => {
   console.log("クエリーID :", router.query.id);
 
   return (
-    <div className="flex justify-center">
-      <div className="mt-10 border w-[90%] sm:max-w-[1000px] bg-white rounded-xl flex flex-col justify-center gap-6 sm:gap-10 py-7 sm:py-12 items-center">
+    <div className=" flex justify-center">
+      <div className="my-10 border w-[90%] sm:max-w-[1000px] bg-white rounded-xl flex flex-col justify-center gap-6 sm:gap-10 py-7 sm:py-12 items-center">
         <div className="flex items-center gap-10">
           <span className="border-b-2 border-orange-300 w-12 sm:w-[100px]"/>
           {/* <Image className="h-16 w-16 sm:h-[124px] sm:w-[124px] rounded-full object-cover" src="/profile-image.jpg" alt="プロフィール画像" height={500} width={500} /> */}

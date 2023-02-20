@@ -128,7 +128,7 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         thumbnailURL: isCreate ? thumbnailURL : oldPost?.thumbnailURL,
         text: data.text,
         maxParticipation: data.maxParticipation,
-        participationNumber: null,
+        participationNumber: isCreate ? 0 : oldPost?.participationNumber,
         eventDate: data.eventDate,
         deadlineDate: data.deadlineDate,
         location: arrayUnion({

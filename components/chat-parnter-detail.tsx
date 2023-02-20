@@ -47,19 +47,31 @@ const ChatParnterDetail = () => {
       }, {merge: true})
       console.log("メッセージ送信完了")
   
-      const chatOwnerRef = collection(db, "chatPartnerLists", currentUser.uid, "data")
+      const chatOwnerRef = collection(db, "chatPartnerLists", currentUser.uid, "data");
       await setDoc(doc(chatOwnerRef, state?.chatId), {
         date: Date.now(),
         latestMessage: data.text,
       }, {merge: true});
       console.log("オーナー情報更新完了")
   
-      const chatPartnerRef = collection(db, "chatPartnerLists", state?.user.partnerId, "data")
+      const chatPartnerRef = collection(db, "chatPartnerLists", state?.user.partnerId, "data");
       await setDoc(doc(chatPartnerRef, state?.chatId), {
         date: Date.now(),
         latestMessage: data.text,
       }, {merge: true});
       console.log("パートナー情報更新完了")
+
+      const notificationRef = doc(db, `notifications/${state?.user.partnerId}`);
+      await setDoc(notificationRef, {
+        notifications: arrayUnion({
+          createdAt: Date.now(),
+          chatId: state?.chatId,
+          chatPartnerInfo: state?.user,
+          isShow: false,
+        })
+      }, {merge: true});
+      console.log("通知完了");
+
       resetField("text");
     }
     catch (err) {

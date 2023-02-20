@@ -6,7 +6,7 @@ import { NextPageWithLayout } from '../../_app';
 import Button from '../../../components/button';
 import { ArrowPathIcon, ClockIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
-import { arrayUnion, collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/client-app';
 import { Post } from '../../../types/post';
 import { User } from '../../../types/user';
@@ -42,6 +42,9 @@ const PostDetail: NextPageWithLayout = () => {
   const postId = router.query.id;
   const [post, setPost] = useState<Post>();
   const [author, setAuthor] = useState<User>();
+  const [didParticipate, setDidParticipate] = useState<boolean>(false);
+  const [isMaxParticipants, setIsMaxParticipants] = useState<boolean>(false);
+  // const [isParticipate, setIsParticipate] = useState<boolean>(true);
   const { currentUser } = useUser();
   // console.log(postId);
   // const [eventLocaion, setEventLocation] = useState<Location>()
@@ -70,15 +73,24 @@ const PostDetail: NextPageWithLayout = () => {
       console.log("エラー :", err);
     })
 
-  }, [post != undefined])
+    const participantRef = collection(db, "participants", currentUser.uid, `${postId}`);
+    getDocs(participantRef).then((result) => {
+      result.docs.map((doc) => {
+        doc.exists() && setDidParticipate(true);
+      })
+    }).catch((err) => {
+      console.log("イベント参加所得状況エラー :", err)
+    })
+
+  }, [post!=undefined])
 
   if(post == null) {
     return null;
   }
+ 
 
   const sendMessage = async () => {
     const combinedId = currentUser.uid > post.authorId ? currentUser.uid + post.authorId : post.authorId + currentUser.uid
-
     
     try {
       const ref = await getDoc(doc(db, "chats", combinedId));
@@ -89,21 +101,6 @@ const PostDetail: NextPageWithLayout = () => {
 
         const ownerRef = collection(db, "chatPartnerLists", currentUser.uid, "data");
 
-        // await setDoc(doc(db, "chatPartnerLists", currentUser.uid), {
-          // [combinedId + ".partnerId"]: post.authorId,
-          // [combinedId + ".date"]: Date.now(),
-        //   [combinedId]: {
-        //       partnerId: post.authorId,
-        //       date: Date.now(),
-        //     }
-        // }, {merge: true});
-
-        // const ownerData: Param = {
-        //   combinedId: combinedId,
-        //   partnerId: post.authorId,
-        //   date: Date.now(),
-        // }
-
         await setDoc(doc(ownerRef, combinedId), ({
             combinedId: combinedId,
             partnerId: post.authorId,
@@ -112,21 +109,12 @@ const PostDetail: NextPageWithLayout = () => {
 
         const partnerRef = collection(db, "chatPartnerLists", post.authorId, "data");
 
-        // await setDoc(doc(db, "chatPartnerLists", post.authorId, ), {
-          // [combinedId + ".partnerId"]: currentUser.uid,
-          // [combinedId + ".date"]: Date.now(),
-        //   [combinedId]:{
-        //     partnerId: post.authorId,
-        //     date: Date.now(),
-        //   }
-        // }, {merge: true});
         await setDoc(doc(partnerRef, combinedId), ({
           combinedId: combinedId,
           partnerId: currentUser.uid,
           date: Date.now(),
         }), {merge: true});
 
-        // router.push("/chats");
       }
       console.log("完了しました");
     } 
@@ -138,6 +126,38 @@ const PostDetail: NextPageWithLayout = () => {
     }
   }
 
+  const participateEvent = async () => {
+    console.log("clicked !!!!")
+    if(currentUser) {
+      try {
+        const participantRef = collection(db, "participants", currentUser.uid, `${postId}`)
+        await setDoc(doc(participantRef), {
+          participation: true,
+        }, {merge: true});
+        const postRef = doc(db, `posts/${postId}`);
+        await setDoc(postRef, {
+          participationNumber: post.participationNumber ? post.participationNumber + 1 : 1,
+        }, {merge: true});
+        console.log("完了")
+      }
+      catch (err) {
+        console.log("イベント参加処理エラー :", err);
+      }
+      finally {
+        router.push("/");
+      }
+    }
+  }
+
+  // console.log("日付文字→数字", new Date(post.deadlineDate))
+  // const a = new Date(post.deadlineDate).toUTCString()
+  // console.log("a :", a)
+  // console.log("日付をミリ秒", Date.parse(a))
+  // console.log("今のミリ秒", Date.now())
+
+  const isParticipate = () => {
+    return Date.parse(new Date(post.deadlineDate).toUTCString()) <= Date.now() ? true : false ;
+  };
 
   return (
     <div className="flex justify-center relative">
@@ -186,12 +206,13 @@ const PostDetail: NextPageWithLayout = () => {
            
           </div>
           <div className="hidden flex-1 sm:flex flex-col gap-10 py-8 px-10">
-            {currentUser.uid != post.authorId &&
+            {currentUser?.uid != post.authorId &&
             <Button className="rounded-full text-white bg-orange-300 h-12 shadow-md tracking-wide" onClick={sendMessage}>メッセージを送る</Button>
              }
             <p className="font-semibold pl-1 tracking-wide">{post.participationNumber}人が参加しています</p>
             {currentUser.uid != post.authorId &&
-            <Button className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm">参加する</Button>
+            // <Button onClick={participateEvent} disabled={isMaxParticipants ? true : didParticipate ? true : isParticipate()} className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm">{isMaxParticipants ? "人数上限到達" : didParticipate ? "応募済み" : isParticipate() ? "応募終了" : "参加する"}</Button>
+            <Button onClick={participateEvent} disabled={Number(post.maxParticipation) <= post.participationNumber! ? true : didParticipate ? true : isParticipate()} className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm">{didParticipate ? "応募済み" : Number(post.maxParticipation) <= post.participationNumber! ? "参加人数上限です" : isParticipate() ? "応募終了" : "参加する"}</Button>
             }
             <hr className="border-slate-500"/>
             <h3 className="font-semibold tracking-wide pl-1">開催場所</h3>

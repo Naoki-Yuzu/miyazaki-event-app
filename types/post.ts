@@ -5,7 +5,7 @@ export type Post = {
   thumbnailURL: string | null | undefined;
   text: string;
   maxParticipation: string;
-  participationNumber: string | null;
+  participationNumber: number | undefined;
   eventDate: number;
   deadlineDate: number;
   location: object | null;
