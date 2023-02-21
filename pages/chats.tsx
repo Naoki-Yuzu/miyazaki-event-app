@@ -1,12 +1,9 @@
-import Image from 'next/image';
 import React, { ReactElement, useEffect, useState } from 'react'
 import Layout from '../components/layout';
 import MessageListCard from '../components/message-list-card';
 import { NextPageWithLayout } from './_app';
-import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
-import DmContainer from '../components/dm-container';
 import useWindowSize from '../utils/use-window-size';
-import { collection, CollectionReference, doc, DocumentData, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { useUser } from '../context/user-context';
 import { db } from '../firebase/client-app';
 import { chatPartner } from '../types/chat-partner';
@@ -23,11 +20,7 @@ const Chats: NextPageWithLayout = () => {
     const getChatPartnerLists = () => {
       if(ref != null) {
         const unsubscriber = onSnapshot(ref, (result) => {
-          // console.log("チャット相手 :", result.data());
-          console.log("結果 :", result.docs.map(doc => doc.data()));
           setChatPartners(result.docs.map(doc => doc.data() as chatPartner))
-          // console.log("リザルトデータ :", result.data() as object)
-          // posts = snap.docs.map(doc => doc.data() as Post);
         })
   
         return () => {
@@ -38,11 +31,6 @@ const Chats: NextPageWithLayout = () => {
 
     currentUser?.uid && getChatPartnerLists();
   }, [currentUser?.uid]);
-
-  // console.log("現在のユーザー :", currentUser)
-  console.log("チャット相手たち :", chatPartners);
-  // console.log("スプレッド演算子" ,{...chatPartners})
-  // console.log("型", typeof(Object.entries(chatPartners)));
 
   if (width <= 639) {
     return (

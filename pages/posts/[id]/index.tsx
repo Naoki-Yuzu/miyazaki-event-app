@@ -6,7 +6,7 @@ import { NextPageWithLayout } from '../../_app';
 import Button from '../../../components/button';
 import { ArrowPathIcon, ClockIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
-import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/client-app';
 import { Post } from '../../../types/post';
 import { User } from '../../../types/user';
@@ -14,28 +14,7 @@ import { format } from 'date-fns';
 import { useUser } from '../../../context/user-context';
 import GoogleMap from '../../../components/google-map';
 import { Location } from '../../../types/location';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { adminDB } from '../../../firebase/server-app';
-import { async } from '@firebase/util';
-import { Portal } from '@headlessui/react';
-
-// export const getStaticProps: GetStaticProps<{post: Post;}> = async (context) => {
-//   const result = await adminDB.doc(`posts/${context.params?.id}`).get()
-//   const post = result.data() as Post;
-
-//   return {
-//     props: {
-//       adminPost: p
-//     }
-//   }
-// }
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   return {
-//     paths: [],
-//     fallback: "blocking",
-//   }
-// }
+import ErrorModal from '../../../components/error-modal';
 
 const PostDetail: NextPageWithLayout = () => {
   const router = useRouter();
@@ -44,26 +23,19 @@ const PostDetail: NextPageWithLayout = () => {
   const [author, setAuthor] = useState<User>();
   const [didParticipate, setDidParticipate] = useState<boolean>(false);
   const [isMaxParticipants, setIsMaxParticipants] = useState<boolean>(false);
-  // const [isParticipate, setIsParticipate] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { currentUser } = useUser();
-  // console.log(postId);
-  // const [eventLocaion, setEventLocation] = useState<Location>()
   const [eventLocaion, setEventLocation] = useState<Location>()
 
   useEffect(() => {
-    console.log(postId);
     const postRef = doc(db, `posts/${postId}`);
-    // console.log("DBリファレンス", postRef);
     getDoc(postRef).then((result) => {
-      // console.log("リザルト", result.data());
       const postData = result.data();
       setPost(postData as Post);
-      // console.log(`型確認記事詳細 : ${typeof(postData?.location)}`)
       setEventLocation(postData?.location[0] as Location)
 
       const userRef = doc(db, `users/${post?.authorId}`)
       getDoc(userRef).then((useResult) => {
-        // console.log("ユーザーリザルト", useResult.data());
         setAuthor(useResult.data() as User);
       }).catch((err) => {
         console.log("エラー :", err);
@@ -73,14 +45,16 @@ const PostDetail: NextPageWithLayout = () => {
       console.log("エラー :", err);
     })
 
-    const participantRef = collection(db, "participants", currentUser.uid, `${postId}`);
-    getDocs(participantRef).then((result) => {
-      result.docs.map((doc) => {
-        doc.exists() && setDidParticipate(true);
+    if(currentUser) {
+      const participantRef = collection(db, "participants", currentUser?.uid, `${postId}`);
+      getDocs(participantRef).then((result) => {
+        result.docs.map((doc) => {
+          doc.exists() && setDidParticipate(true);
+        })
+      }).catch((err) => {
+        console.log("イベント参加所得状況エラー :", err)
       })
-    }).catch((err) => {
-      console.log("イベント参加所得状況エラー :", err)
-    })
+    }
 
   }, [post!=undefined])
 
@@ -90,13 +64,16 @@ const PostDetail: NextPageWithLayout = () => {
  
 
   const sendMessage = async () => {
+    if(!currentUser) {
+      setIsModalOpen(true);
+      return null;
+    }
     const combinedId = currentUser.uid > post.authorId ? currentUser.uid + post.authorId : post.authorId + currentUser.uid
     
     try {
       const ref = await getDoc(doc(db, "chats", combinedId));
 
       if(!ref.exists()) {
-        console.log("チャットデータ作成開始");
         await setDoc(doc(db, "chats", combinedId), { messages: [] }, {merge: true});
 
         const ownerRef = collection(db, "chatPartnerLists", currentUser.uid, "data");
@@ -127,7 +104,10 @@ const PostDetail: NextPageWithLayout = () => {
   }
 
   const participateEvent = async () => {
-    console.log("clicked !!!!")
+    if(!currentUser) {
+      setIsModalOpen(true);
+      return null;
+    }
     if(currentUser) {
       try {
         const participantRef = collection(db, "participants", currentUser.uid, `${postId}`)
@@ -138,7 +118,6 @@ const PostDetail: NextPageWithLayout = () => {
         await setDoc(postRef, {
           participationNumber: post.participationNumber ? post.participationNumber + 1 : 1,
         }, {merge: true});
-        console.log("完了")
       }
       catch (err) {
         console.log("イベント参加処理エラー :", err);
@@ -149,12 +128,10 @@ const PostDetail: NextPageWithLayout = () => {
     }
   }
 
-  // console.log("日付文字→数字", new Date(post.deadlineDate))
-  // const a = new Date(post.deadlineDate).toUTCString()
-  // console.log("a :", a)
-  // console.log("日付をミリ秒", Date.parse(a))
-  // console.log("今のミリ秒", Date.now())
-
+  const closeModal = () => {
+    setIsModalOpen(false);
+  }
+ 
   const isParticipate = () => {
     return Date.parse(new Date(post.deadlineDate).toUTCString()) <= Date.now() ? true : false ;
   };
@@ -179,7 +156,7 @@ const PostDetail: NextPageWithLayout = () => {
         <Link href={`/profiles/${post.authorId}`} className="w-full">
           <div className="flex items-center gap-2 m-3">
             {/* <Image src="/user-image-miyazaki-hinata.jpg" alt="userImage"  className="sm:w-[36px] sm:h-[36px] w-6 h-6 object-cover rounded-full"  height={36} width={36}/> */}
-            <img src={author?.profileImage} alt="userImage"  className="sm:w-[36px] sm:h-[36px] w-6 h-6 object-cover rounded-full"  height={36} width={36}/>
+            <img src={author?.profileImage ? author?.profileImage : "/profile-image.svg"} alt="userImage"  className="sm:w-[36px] sm:h-[36px] w-6 h-6 object-cover rounded-full"  height={36} width={36}/>
             {/* <p className="text-zinc-700 text-xs sm:text-sm tracking-wide ">タカチホハッシン交流会</p> */}
             <p className="text-zinc-700 text-xs sm:text-sm tracking-wide ">{author?.name}</p>
           </div>
@@ -197,7 +174,7 @@ const PostDetail: NextPageWithLayout = () => {
               </Link>}
             </div>
             <hr className="border-slate-500"/>
-            <p className="leading-loose tracking-wide text-sm sm:text-base">{post.text}
+            <p className="leading-loose tracking-wide text-sm sm:text-base whitespace-pre-wrap">{post.text}
             </p>
             <hr className="border-slate-500 sm:hidden"/>
             <h3 className="sm:hidden text-base sm:text-lg font-bold mt-2">開催場所</h3>
@@ -210,7 +187,7 @@ const PostDetail: NextPageWithLayout = () => {
             <Button className="rounded-full text-white bg-orange-300 h-12 shadow-md tracking-wide" onClick={sendMessage}>メッセージを送る</Button>
              }
             <p className="font-semibold pl-1 tracking-wide">{post.participationNumber}人が参加しています</p>
-            {currentUser.uid != post.authorId &&
+            {currentUser?.uid != post.authorId &&
             // <Button onClick={participateEvent} disabled={isMaxParticipants ? true : didParticipate ? true : isParticipate()} className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm">{isMaxParticipants ? "人数上限到達" : didParticipate ? "応募済み" : isParticipate() ? "応募終了" : "参加する"}</Button>
             <Button onClick={participateEvent} disabled={Number(post.maxParticipation) <= post.participationNumber! ? true : didParticipate ? true : isParticipate()} className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm">{didParticipate ? "応募済み" : Number(post.maxParticipation) <= post.participationNumber! ? "参加人数上限です" : isParticipate() ? "応募終了" : "参加する"}</Button>
             }
@@ -224,14 +201,15 @@ const PostDetail: NextPageWithLayout = () => {
       <div className="sm:hidden flex-1 flex flex-col fixed bottom-5 w-[95%] bg-white border py-4 rounded-xl shadow-md">
         <div className="w-[90%] flex flex-col mx-auto gap-4">
           <p className="text-sm font-semibold pl-1 tracking-wide w-full">{post.participationNumber}人が参加しています</p>
-          {currentUser.uid != post.authorId &&
+          {currentUser?.uid != post.authorId &&
           <>
-            <Button className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm w-full">参加する</Button>
+            <Button onClick={participateEvent} disabled={Number(post.maxParticipation) <= post.participationNumber! ? true : didParticipate ? true : isParticipate()} className="rounded-full text-gray-500 shadow-md border-slate-500 text-xs sm:text-sm w-full">{didParticipate ? "応募済み" : Number(post.maxParticipation) <= post.participationNumber! ? "参加人数上限です" : isParticipate() ? "応募終了" : "参加する"}</Button>
             <Button className="rounded-full text-white bg-orange-300 h-11 text-sm shadow-md tracking-wide w-full" onClick={sendMessage}>メッセージを送る</Button>
           </>
           }
         </div>
       </div>
+      <ErrorModal isOpen={isModalOpen} closeModal={closeModal} errorMessage="この操作を行うには、アカウントの登録が必要です。" />
     </div>
   );
 };

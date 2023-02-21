@@ -7,7 +7,6 @@ const Layout = ({children} : { children: ReactNode}) => {
     <>
       <Header />
       <main className="bg-orange-50">{children}</main>
-      {/* max-h-[calc(100vh-256px)] sm:max-h-[calc(100vh-264px)] */}
       <Footer />
     </>
   );

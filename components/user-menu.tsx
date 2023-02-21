@@ -43,8 +43,6 @@ const UserMenu = () => {
     })
   ]
 
-  console.log(currentUser);
-
   return (
       <Menu as="div" className="relative inline-block text-left ">
         <div>

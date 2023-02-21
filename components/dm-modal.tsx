@@ -23,7 +23,6 @@ const DmModal = ({isOpen, closeModal}: {isOpen: boolean, closeModal: VoidFunctio
     const getUserInfo = () => {
       const ref = doc(db, `users/${state?.user.partnerId}`);
       getDoc(ref).then((result) => {
-        console.log("チャット詳細 :", result.data() );
         setUser( result.data() as User);
       }).catch((err) => {
         console.log("チャット詳細画面エラー :", err);
@@ -35,7 +34,6 @@ const DmModal = ({isOpen, closeModal}: {isOpen: boolean, closeModal: VoidFunctio
 
   const sendMessage = async (data: ChatMessage) => {
     try {
-      console.log("メッセージ送信開始 モバイル版")
       const chatIdRef = doc(db, `chats/${state?.chatId}`)
       await setDoc(chatIdRef, {
         messages: arrayUnion({
@@ -44,24 +42,22 @@ const DmModal = ({isOpen, closeModal}: {isOpen: boolean, closeModal: VoidFunctio
           createdAt: Date.now(),
         })
       }, {merge: true})
-      console.log("メッセージ送信完了 モバイル版")
   
       const chatOwnerRef = collection(db, "chatPartnerLists", currentUser.uid, "data")
       await setDoc(doc(chatOwnerRef, state?.chatId), {
         date: Date.now(),
         latestMessage: data.text,
       }, {merge: true});
-      console.log("オーナー情報更新完了 モバイル版")
   
       const chatPartnerRef = collection(db, "chatPartnerLists", state?.user.partnerId, "data")
       await setDoc(doc(chatPartnerRef, state?.chatId), {
         date: Date.now(),
         latestMessage: data.text,
       }, {merge: true});
-      console.log("パートナー情報更新完了 モバイル版")
       resetField("text");
     }
     catch (err) {
+      alert("エラーが発生しました");
       console.log("チャットメッセージ送信エラー :", err);
     }
   }

@@ -18,14 +18,12 @@ const Profile: NextPageWithLayout = () => {
   useEffect(() => {
     const ref = doc(db, `users/${router.query.id}`);
     getDoc(ref).then((result) => {
-      // console.log("リザルト プロフィールページ :", result.data() as User);
       setUserProfile(result.data() as User);
     }).catch((err) => {
       console.log("プロフィール閲覧ページエラー :", err);
     })
-  }, [userProfile == undefined]);
+  }, [router.query.id, userProfile == undefined]);
 
-  console.log("クエリーID :", router.query.id);
 
   return (
     <div className=" flex justify-center">
@@ -50,7 +48,7 @@ const Profile: NextPageWithLayout = () => {
           </div>
         </div>
         <div className="bg-orange-50 sm:px-[70px] sm:py-[30px] sm:min-h-[250px] flex items-center mx-4 p-5 rounded-xl">
-          <p className="text-sm sm:text-base">
+          <p className="text-sm sm:text-base whitespace-pre-wrap">
             {userProfile && userProfile.profileText ? userProfile.profileText : "自己紹介はありません。"}
             {/* 半年前に北海道から宮崎県へ移住してきました。<br />
             橘通でテナントを借りてヨガのトレーナーをしています。<br />

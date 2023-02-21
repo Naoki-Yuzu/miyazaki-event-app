@@ -12,20 +12,6 @@ import Button from './button';
 import GoogleMap from './google-map';
 import LoadingModal from './loading-modal';
 
-
-const participationNumber = [
-  {value: 1, label: 1},
-  {value: 2, label: 2},
-  {value: 3, label: 3},
-  {value: 4, label: 4},
-  {value: 5, label: 5},
-  {value: 6, label: 6},
-  {value: 7, label: 7},
-  {value: 8, label: 8},
-  {value: 9, label: 9},
-  {value: 10, label: 10},
-];
-
 const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefined}) => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<Post>();
   const [fileError, setFileError ] = useState<boolean>(false);
@@ -44,7 +30,6 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
       const ref = doc(db, `posts/${router.query.id}`);
       getDoc(ref).then((result) => {
         const oldPost = result.data() as Post;
-        // console.log("古い投稿 :", oldPost);
         reset(oldPost);
         setPreview(oldPost.thumbnailURL as string)
         setOldPost(oldPost)
@@ -85,7 +70,6 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
 
   const ValidateContainFile = () => {
     if(preview == "/no-image.png" || null) {
-      console.log("in validate file")
       setFileError(true);
     }
     if(location == undefined) {
@@ -115,7 +99,6 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         if (file == undefined) {
           return;
         }
-        console.log("画像アップロード処理開始");
         const storageRef = ref(storage, `posts/${dbRef.id}/thumbnailURL`);
         await uploadBytes(storageRef, file)
         thumbnailURL = await getDownloadURL(storageRef);
@@ -138,7 +121,6 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         createdAt: isCreate ? Date.now() :  oldPost!.createdAt,
         updatedAt: isCreate ? null : Date.now(),
       };
-      console.log("投稿内容 :", post);
       setDoc(dbRef, post).then( async () => {
         const token = await auth.currentUser?.getIdToken(true);
 
@@ -156,11 +138,6 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         }).catch((err) => {
           console.log("onDemand ISR エラー :", err);
         })
-        // console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
-        // setIsModalOpen(false);
-        // router.push("/");
-      
-
         
       }).catch((err) => {
         setIsModalOpen(false);
@@ -223,10 +200,14 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
             <select {...register("maxParticipation", {
               required: "参加可能人数を入力してください。"
             })} className="w-full border-2 rounded tracking-wider px-1 outline-none text-sm sm:text-base sm:h-9">
-              {participationNumber.map(item => {
-                return (
-                  <option key={item.value} value={item.value}>{item.label}</option>
-                );
+              {new Array(51).fill(null).map((_, index,) => {
+                if(index == 0) {
+                  return null;
+                } else {
+                  return (
+                    <option key={index} value={index}>{index}</option>
+                  );
+                }
               })}
             </select>
             {errors.maxParticipation && <p className="text-red-600 text-[10px] sm:text-xs">{errors.maxParticipation.message}</p>}

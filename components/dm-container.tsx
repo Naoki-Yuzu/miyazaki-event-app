@@ -23,8 +23,6 @@ const DmContainer = () => {
     };
   }, [state?.chatId])
 
-  {console.log("チャットメッセージ群", messages)};
-
   return (
     <div className="flex-1 py-5 px-2 gap-5 sm:gap-9 flex flex-col overflow-y-scroll sm:max-h-[500px] ">
       {/* <Message isOwnerMessage/>

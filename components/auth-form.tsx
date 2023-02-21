@@ -6,10 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { loginWithGoogle, signUpWithGoogle } from '../utils/google-auth';
 import { useForm } from 'react-hook-form';
-import { User } from '../types/user';
 import { useUser } from '../context/user-context';
 import { useRouter } from 'next/router';
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/client-app';
 import { doc, setDoc } from 'firebase/firestore';
 import LoadingModal from './loading-modal';
@@ -20,10 +19,8 @@ const AuthForm = ({isRegister} : {isRegister: boolean}) => {
   const { currentUser } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  console.log("現在のユーザー from 認証ページ:", currentUser);
 
   const createUserWithEAndP = (data: Auth) => {
-    console.log("フォームデータ :", data);
     setIsOpen(true);
     createUserWithEmailAndPassword(auth, data.email, data.password).then((result) => {
       if (result.user) {

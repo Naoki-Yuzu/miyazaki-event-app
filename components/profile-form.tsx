@@ -28,7 +28,6 @@ const ProfileForm = ({image}: {image: string | undefined}) => {
   useEffect(() => {
     const ref = doc(db, `users/${router.query.id}`)
     getDoc(ref).then((result) => {
-      // console.log("リザルト プロフィール編集ページ :", result.data() as User);
       setUserProfile(result.data() as User);
       const oldProfile = result.data() as User;
       if (oldProfile.profileImage) {
@@ -39,9 +38,6 @@ const ProfileForm = ({image}: {image: string | undefined}) => {
       console.log("プロフィール編集ページエラー :", err);
     })
   }, [userProfile == undefined])
-
-  console.log("ユーザーID :", router.query.id);
-  console.log("画像ファイル :", file);
   
   if (image) {
     setPreview(image);
@@ -70,7 +66,6 @@ const ProfileForm = ({image}: {image: string | undefined}) => {
     let profileURL;
     try {
       if (file != undefined) {
-        console.log("画像アップロード処理開始");
         const storageRef = ref(storage, `users/${currentUser.uid}/profileURL`);
         await uploadBytes(storageRef, file);
         profileURL = await getDownloadURL(storageRef);
@@ -83,7 +78,6 @@ const ProfileForm = ({image}: {image: string | undefined}) => {
         profileImage: file ? profileURL : data.profileImage ? data.profileImage : null,
         livingStatusType: data.livingStatusType,
       }
-      console.log("更新データ :", userProfile);
 
       const dbRef = doc(db, `users/${currentUser.uid}`);
       setDoc(dbRef, userProfile).then(() => {
@@ -101,10 +95,6 @@ const ProfileForm = ({image}: {image: string | undefined}) => {
       alert("エラーが発生しました");
       console.log("画像アップロードエラー :", err);
     }
-
-    
-
-
   }
 
   return (

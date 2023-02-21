@@ -1,6 +1,5 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { useRouter } from 'next/router';
 import { auth, db } from '../firebase/client-app';
 
 export const signUpWithGoogle = () : Promise<void> => {
@@ -38,7 +37,6 @@ export const loginWithGoogle = () => {
 
 export const logout = () => {
   return signOut(auth).then(() => {
-    console.log("ログアウトが完了しました")
   }).catch((err) => {
     console.log("エラーメッセージ : ", err);
   });

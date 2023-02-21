@@ -33,8 +33,6 @@ export const ChatProvider = ({children}: {children: ReactNode}) => {
   const chatReducer = (state: State, action: Action) => {
     switch(action.type){
       case "CHANGE_CHAT_PARTNER":
-        console.log("action type :", action.type);
-        console.log("action payload :", action.payload);
         return {
           chatId: currentUser.uid > action.payload.partnerId ? currentUser.uid + action.payload.partnerId : action.payload.partnerId + currentUser.uid,
           user: action.payload,
@@ -45,7 +43,6 @@ export const ChatProvider = ({children}: {children: ReactNode}) => {
   }
 
   const [state, dispatch] = useReducer(chatReducer, initialState)
-  // console.log("state :", state)
 
   return (
     <ChatContext.Provider value={{state: state, dispatch }}>

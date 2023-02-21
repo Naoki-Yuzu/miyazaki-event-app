@@ -13,14 +13,8 @@ import DmModal from './dm-modal';
 const MessageListCard = ({chatPartnerInfo}: {chatPartnerInfo: chatPartner}) => {
   const [user, setUser] = useState<User>()
   const [width, _] = useWindowSize();
-  const { currentUser } = useUser()
   const {state, dispatch} = useChat()
-
   const [isShowModal, setIsShowModal] = useState<boolean>(false);
-
-  const openModal = () => {
-    setIsShowModal(true);
-  };
 
   const selectUser = ( data: chatPartner ) => {
     if(width <= 639) {
@@ -29,8 +23,6 @@ const MessageListCard = ({chatPartnerInfo}: {chatPartnerInfo: chatPartner}) => {
         dispatch({type: "CHANGE_CHAT_PARTNER", payload: data})
       }
     } else {
-      // console.log("clicked..")
-      console.log("user data :", data);
       if(dispatch) {
         dispatch({type: "CHANGE_CHAT_PARTNER", payload: data})
       }
@@ -39,21 +31,16 @@ const MessageListCard = ({chatPartnerInfo}: {chatPartnerInfo: chatPartner}) => {
  
   const closeModal = () => {
     setIsShowModal(false);
-    console.log(isShowModal)
   };
 
   useEffect(() => {
     if(chatPartnerInfo != null) {
       const ref = doc(db, `users/${chatPartnerInfo.partnerId}`);
       getDoc(ref).then((result) => {
-        // console.log("メッセージリストリザルト :", result.data());
         setUser(result.data() as User);
       })
     }
   }, [])
-
-  // console.log("chatPartnerInfo :", chatPartnerInfo.partnerId)
-
 
   return (
     <>
