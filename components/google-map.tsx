@@ -1,42 +1,60 @@
-import React, { useState } from 'react';
-import GoogleMapReact from 'google-map-react';
+import React, { Dispatch, ReactNode, SetStateAction, useState } from 'react';
+import GoogleMapReact, { Coords } from 'google-map-react';
+import { Location } from '../types/location';
 
-const GoogleMap = ({className}: {className: string | undefined}) => {
+const GoogleMap = ({className, setLocation, setLocationError, eventLocation}: {className: string | undefined, setLocation: Dispatch<SetStateAction<Location | undefined>> | null, setLocationError: Dispatch<SetStateAction<boolean>> | null, eventLocation:  Location | undefined | null;}) => {
   const [map, setMap] = useState<any>(null);
   const [maps, setMaps] = useState<any>(null);
   const [marker, setMarker] = useState<any>(null);
+  let defaultLocation : Coords;
 
-  const defaultLocation = {
-    // 宮崎駅
-    lat: 31.915999212325794, //緯度
-    lng: 131.43204464722203, //経度
-  };
-
-  const getLocation = ({lat, lng} : {lat: number, lng: number}) => {
-    if (marker) {
-      marker.setMap(null);
-    }
-    const location = {
-      lat,
-      lng
-    }
-    setMarker(new maps.Marker({
-      map,
-      position: location,
-    }));
-    console.log(location);
+  if (eventLocation) {
+    defaultLocation = {
+      // イベント会場
+      lat: eventLocation.lat, //緯度
+      lng: eventLocation.lng, //経度
+    };
+  } else {
+    defaultLocation = {
+      // 宮崎駅
+      lat: 31.915999212325794, //緯度
+      lng: 131.43204464722203, //経度
+    };
   }
 
-  // const handleApiLoaded = ({map, maps} : {map: any, maps: any}) => {
-  //   new maps.Marker({
-  //     map,
-  //     position: undefined,
-  //   });
-  // }
+  const getLocation = ({lat, lng} : {lat: number, lng: number}) => {
+    if (eventLocation != null) {
+    } else {
+      if (marker) {
+        marker.setMap(null);
+      }
+      const location = {
+        lat,
+        lng
+      }
+      setLocation!({
+        lat,
+        lng,
+      });
+      setLocationError!(false);
+      setMarker(new maps.Marker({
+        map,
+        position: location,
+      }));
+    }
+
+  }
 
   const handleApiLoaded = (object: any) => {
-    setMap(object.map);
-    setMaps(object.maps);
+    if (eventLocation != null) {
+      new object.maps.Marker({
+            map: object.map,
+            position: defaultLocation as Coords,
+          });
+    } else {
+      setMap(object.map);
+      setMaps(object.maps);
+    }
   };
 
   return (
