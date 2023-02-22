@@ -162,7 +162,7 @@ const PostDetail: NextPageWithLayout = () => {
           </div>
         </Link>
         {/* <Image src="/mountain.jpg" alt="thumnail" height={430} width={1000} className="w-full h-[200px] sm:h-[430px]"/> */}
-        <img src={post?.thumbnailURL} alt="thumnail" height={430} width={1000} className="w-full h-[200px] sm:h-[430px]"/>
+        <img src={post?.thumbnailURL!} alt="thumnail" height={430} width={1000} className="w-full h-[200px] sm:h-[430px]"/>
         <div className="flex">
           <div className="w-full sm:w-[65%] my-5 mx-2 sm:mx-3 flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0">
