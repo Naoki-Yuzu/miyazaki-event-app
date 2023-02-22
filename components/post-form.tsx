@@ -121,24 +121,26 @@ const PostForm = ({isCreate, image} : {isCreate: boolean, image: string | undefi
         createdAt: isCreate ? Date.now() :  oldPost!.createdAt,
         updatedAt: isCreate ? null : Date.now(),
       };
-      setDoc(dbRef, post).then( async () => {
-        const token = await auth.currentUser?.getIdToken(true);
-
-        fetch("/api/revalidate?path=/", {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token,
-          }
-        })
-        .then((res) => res.json())
-        .then(() => {
-          console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
-          setIsModalOpen(false);
-          router.push("/");
-        }).catch((err) => {
-          console.log("onDemand ISR エラー :", err);
-        })
-        
+      setDoc(dbRef, post).then(() => {
+        // revalidateの挑戦記録として残す
+        // const token = await auth.currentUser?.getIdToken(true);
+        // fetch("/api/revalidate?path=/", {
+        //   method: "POST",
+        //   headers: {
+        //     Authorization: "Bearer " + token,
+        //   }
+        // })
+        // .then((res) => res.json())
+        // .then(() => {
+        //   console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
+        //   setIsModalOpen(false);
+        //   router.push("/");
+        // }).catch((err) => {
+        //   console.log("onDemand ISR エラー :", err);
+        // })
+        console.log(`記事を${isCreate ? "投稿" : "更新"}しました。`);
+        setIsModalOpen(false);
+        router.push("/");
       }).catch((err) => {
         setIsModalOpen(false);
         alert("エラーが発生しました");
