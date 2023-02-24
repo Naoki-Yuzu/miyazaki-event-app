@@ -39,12 +39,12 @@ const Home: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideP
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.svg" />
       </Head>
-      <div className="flex min-h-screen py-12 sm:py-0 px-4 sm:px-60 justify-center sm:justify-between flex-wrap gap-12 sm:gap-0 overflow-y-scroll ">
-        {!currentUser &&
+      {!currentUser &&
         <div className="flex w-full bg-white h-8 sm:h-10 items-center justify-center">
           <Link href="/about" className="p-2align-middle tracking-wider text-black text-xs sm:text-sm" ><span className="font-semibold text-orange-500 text-sm sm:text-base">みや</span><span className="font-semibold text-green-600  text-sm sm:text-base">イベ</span>について</Link>
         </div>
         }
+      <div className="flex min-h-screen py-12 sm:py-0 px-4 sm:px-60 justify-center sm:justify-between flex-wrap gap-12 sm:gap-0 overflow-y-scroll ">
         {posts?.map((post: Post) => {
           return (
             <PostComp postId={post.id} thumbnail={post.thumbnailURL} title={post.title} authorId={post.authorId} key={post.id}/>
