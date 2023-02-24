@@ -24,7 +24,7 @@
 - [x] Next.js
 
 #### ライブラリ
-- [x] Ract
+- [x] React
 - [x] Headless UI
 - [x] Tailwind CSS
 
