@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## みやイベ
 
-## Getting Started
+<img src="https://user-images.githubusercontent.com/56902307/221076207-25a84feb-6aee-48ab-a506-1b023cf46977.png" >
 
-First, run the development server:
+[サイトはこちら](https://miya-ibe.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## みやイベとは？
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+宮崎県を盛り上げたい人と宮崎県に移住したい人を繋げる移住支援プラットフォームです！
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## 主な機能
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- [x] ユーザー登録・ログイン
+- [x] 記事投稿・編集・閲覧
+- [x] プロフィール編集・閲覧
+- [x] チャット
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## 技術一覧
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+#### 言語
+- [x] TypeScript
 
-## Learn More
+#### フレームワーク
+- [x] Next.js
 
-To learn more about Next.js, take a look at the following resources:
+#### ライブラリ
+- [x] Ract
+- [x] Headless UI
+- [x] Tailwind CSS
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### BaaS
+- [x] Firebase
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+#### Hosting
+- [x] Vercel
 
-## Deploy on Vercel
+#### デザイン
+- [x] Figma
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### エディタ
+- [x] VS Code
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+#### コード管理
+- [x] Git
