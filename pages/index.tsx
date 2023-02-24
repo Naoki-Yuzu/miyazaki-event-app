@@ -40,7 +40,6 @@ const Home: NextPageWithLayout<InferGetStaticPropsType<typeof getStaticProps>> =
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.svg" />
       </Head>
-      {/* <div className="flex h-screen py-12 sm:py-0 px-4 sm:px-60 justify-center sm:justify-between flex-wrap gap-12 sm:gap-0 overflow-y-scroll "> */}
       {!currentUser &&
       <div className="flex w-full bg-white h-8 sm:h-10 items-center justify-center">
         <Link href="/about" className="p-2align-middle tracking-wider text-black text-xs sm:text-sm" ><span className="font-semibold text-orange-500 text-sm sm:text-base">みや</span><span className="font-semibold text-green-600  text-sm sm:text-base">イベ</span>について</Link>
@@ -53,11 +52,6 @@ const Home: NextPageWithLayout<InferGetStaticPropsType<typeof getStaticProps>> =
           );
         })}
       </div>
-        {/* {new Array(4).fill(null).map((_, index) => {
-          return (
-            <PostComp thumbnail="dummyString" title="dummyString" userImage="dummyString" key={index}/>
-          );
-        })} */}
     </>
   );
 };
